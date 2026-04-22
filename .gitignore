@@ -1,0 +1,12 @@
+# Secret keys — never commit this
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+
+# App data
+data/articles.json

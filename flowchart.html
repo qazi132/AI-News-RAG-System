@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI News RAG — Flowchart</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background:#0a0a0f; font-family:'Segoe UI',system-ui,sans-serif;
+  display:flex; flex-direction:column; align-items:center;
+  padding:40px 20px 60px; min-height:100vh;
+}
+h1 {
+  font-family:'Courier New',monospace; color:#00ff9d;
+  font-size:1.5rem; letter-spacing:2px; text-transform:uppercase;
+  margin-bottom:6px; text-shadow:0 0 20px #00ff9d66;
+}
+.subtitle { color:#556070; font-size:0.8rem; font-family:'Courier New',monospace; margin-bottom:48px; letter-spacing:1px; }
+.flow { display:flex; flex-direction:column; align-items:center; gap:0; width:100%; max-width:620px; }
+
+.node { width:100%; border-radius:10px; padding:18px 24px; display:flex; align-items:flex-start; gap:16px; transition:transform 0.15s; }
+.node:hover { transform:scale(1.01); }
+.node-icon { font-size:1.6rem; flex-shrink:0; margin-top:2px; }
+.node-body { flex:1; }
+.node-label { font-size:0.65rem; font-family:'Courier New',monospace; letter-spacing:2px; text-transform:uppercase; margin-bottom:4px; opacity:0.7; }
+.node-title { font-size:1rem; font-weight:700; margin-bottom:4px; }
+.node-desc { font-size:0.78rem; line-height:1.5; opacity:0.75; }
+.node-badge { display:inline-block; font-size:0.62rem; font-family:'Courier New',monospace; border-radius:20px; padding:2px 9px; margin-top:7px; font-weight:600; }
+
+.c-scrape   { background:#0f1a12; border:1px solid #00ff9d44; color:#c8f0d8; }
+.c-scrape   .node-label { color:#00ff9d; } .c-scrape .node-title { color:#e2ffe8; }
+.c-scrape   .node-badge { background:#00ff9d22; border:1px solid #00ff9d66; color:#00ff9d; }
+
+.c-chunk    { background:#0f1520; border:1px solid #60a5fa44; color:#cce0ff; }
+.c-chunk    .node-label { color:#60a5fa; } .c-chunk .node-title { color:#e0efff; }
+.c-chunk    .node-badge { background:#60a5fa22; border:1px solid #60a5fa66; color:#60a5fa; }
+
+.c-embed    { background:#1a1507; border:1px solid #facc1544; color:#fef9c3; }
+.c-embed    .node-label { color:#facc15; } .c-embed .node-title { color:#fffbe0; }
+.c-embed    .node-badge { background:#facc1522; border:1px solid #facc1566; color:#facc15; }
+
+.c-faiss    { background:#110d1f; border:1px solid #a78bfa44; color:#ede9fe; }
+.c-faiss    .node-label { color:#a78bfa; } .c-faiss .node-title { color:#f5f0ff; }
+.c-faiss    .node-badge { background:#a78bfa22; border:1px solid #a78bfa66; color:#a78bfa; }
+
+.c-retrieve { background:#0f1520; border:1px solid #60a5fa44; color:#cce0ff; }
+.c-retrieve .node-label { color:#60a5fa; } .c-retrieve .node-title { color:#e0efff; }
+.c-retrieve .node-badge { background:#60a5fa22; border:1px solid #60a5fa66; color:#60a5fa; }
+
+.c-groq     { background:#180f07; border:1px solid #f9731644; color:#ffedd5; }
+.c-groq     .node-label { color:#fb923c; } .c-groq .node-title { color:#fff5ec; }
+.c-groq     .node-badge { background:#f9731622; border:1px solid #f9731666; color:#fb923c; }
+
+.c-answer   { background:#0f1a12; border:2px solid #00ff9d88; color:#c8f0d8; }
+.c-answer   .node-label { color:#00ff9d; } .c-answer .node-title { color:#e2ffe8; }
+.c-answer   .node-badge { background:#00ff9d33; border:1px solid #00ff9daa; color:#00ff9d; }
+
+.arrow { display:flex; flex-direction:column; align-items:center; margin:2px 0; }
+.arrow-line { width:2px; height:22px; background:linear-gradient(to bottom,#1e3040,#2a4060); }
+.arrow-head { width:0; height:0; border-left:7px solid transparent; border-right:7px solid transparent; border-top:10px solid #2a4060; }
+
+.divider { width:100%; display:flex; align-items:center; gap:12px; margin:10px 0; }
+.divider-line { flex:1; height:1px; background:#1e2d40; }
+.divider-label { font-family:'Courier New',monospace; font-size:0.7rem; color:#f87171; letter-spacing:2px; white-space:nowrap; background:#1a0d0d; border:1px solid #f8717144; border-radius:20px; padding:3px 12px; }
+
+.legend { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:40px; max-width:620px; }
+.legend-item { display:flex; align-items:center; gap:7px; font-size:0.72rem; color:#7a8a9a; font-family:'Courier New',monospace; }
+.legend-dot { width:10px; height:10px; border-radius:50%; }
+</style>
+</head>
+<body>
+
+<h1>&#x2B21; AI News RAG</h1>
+<div class="subtitle">system architecture flowchart</div>
+
+<div class="flow">
+
+  <div class="node c-scrape">
+    <div class="node-icon">&#x1F310;</div>
+    <div class="node-body">
+      <div class="node-label">Step 1 &mdash; Data Ingestion</div>
+      <div class="node-title">TechCrunch Scraper</div>
+      <div class="node-desc">BeautifulSoup fetches /latest/ feed. Extracts title, date, full content, and summary from each article. Results cached to data/articles.json.</div>
+      <span class="node-badge">BeautifulSoup4 + Requests</span>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+  <div class="node c-chunk">
+    <div class="node-icon">&#x2702;&#xFE0F;</div>
+    <div class="node-body">
+      <div class="node-label">Step 2 &mdash; Text Processing</div>
+      <div class="node-title">Chunking</div>
+      <div class="node-desc">Each article split into overlapping chunks. Smaller pieces allow precise similarity matching during retrieval.</div>
+      <span class="node-badge">chunk_size=800 &middot; overlap=100 &middot; LangChain TextSplitter</span>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+  <div class="node c-embed">
+    <div class="node-icon">&#x1F917;</div>
+    <div class="node-body">
+      <div class="node-label">Step 3 &mdash; Vectorisation</div>
+      <div class="node-title">HuggingFace Embeddings API</div>
+      <div class="node-desc">Each chunk converted to a 384-dim vector via the HuggingFace Serverless Inference API. No local model download required.</div>
+      <span class="node-badge">sentence-transformers/all-MiniLM-L6-v2 &middot; FREE API</span>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+  <div class="node c-faiss">
+    <div class="node-icon">&#x1F5C4;&#xFE0F;</div>
+    <div class="node-body">
+      <div class="node-label">Step 4 &mdash; Storage</div>
+      <div class="node-title">FAISS Vector Store</div>
+      <div class="node-desc">All chunk embeddings stored in an in-memory FAISS index. Enables millisecond-speed cosine similarity search across all articles.</div>
+      <span class="node-badge">FAISS (in-memory) &middot; LangChain wrapper</span>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-label">&#x25B6; USER ASKS A QUESTION</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <div class="node c-retrieve">
+    <div class="node-icon">&#x1F50D;</div>
+    <div class="node-body">
+      <div class="node-label">Step 5 &mdash; Query Processing</div>
+      <div class="node-title">Similarity Search</div>
+      <div class="node-desc">User question embedded via the same HuggingFace API. FAISS returns the top-k most semantically similar article chunks as context.</div>
+      <span class="node-badge">top-k chunks &middot; cosine similarity</span>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+  <div class="node c-groq">
+    <div class="node-icon">&#x26A1;</div>
+    <div class="node-body">
+      <div class="node-label">Step 6 &mdash; Generation</div>
+      <div class="node-title">Groq LLM API</div>
+      <div class="node-desc">Retrieved chunks + user question sent to Groq. The LLM generates a grounded answer citing specific articles. Ultra-fast inference via Groq LPU hardware.</div>
+      <span class="node-badge">llama-3.1-8b-instant &middot; llama-3.3-70b-versatile &middot; FREE API</span>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+  <div class="node c-answer">
+    <div class="node-icon">&#x1F4AC;</div>
+    <div class="node-body">
+      <div class="node-label">Step 7 &mdash; Output</div>
+      <div class="node-title">Grounded Answer + Sources</div>
+      <div class="node-desc">Streamlit displays the answer in the chat UI alongside source article titles. The answer is grounded in real scraped news &mdash; no hallucination.</div>
+      <span class="node-badge">Streamlit Chat UI &middot; source chips</span>
+    </div>
+  </div>
+
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#00ff9d"></div>Scraping / Output</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div>Chunking / Retrieval</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#facc15"></div>HuggingFace API</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div>FAISS Vector Store</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div>User Trigger</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#fb923c"></div>Groq API (LLM)</div>
+</div>
+
+</body>
+</html>
