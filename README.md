@@ -193,8 +193,4 @@ In the sidebar:
 - TechCrunch HTML structure may change over time; update selectors in `scraper.py` if scraping breaks
 - For production, replace in-memory FAISS with a persistent store like Chroma or Qdrant
 
----
 
-## 📄 License
-
-MIT — free to use, modify, and distribute.
